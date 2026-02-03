@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABEL - AI Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-page">
+
+    <div class="chat-wrapper">
+        <header class="chat-header">
+            <div class="chat-avatar"></div>
+            <div class="chat-info">
+                <h1>ABEL</h1>
+                <p>Artificial Buddy for Effective Learning <span class="status-indicator">Online</span></p>
+            </div>
+        </header>
+
+        <div id="chat-box">
+            <div class="msg bot">
+                Hello! I am ABEL, your AI learning companion. I can help you find answers from the knowledge graph or answer general questions. How can I help you today?
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" onkeypress="handleKeyPress(event)">
+            <button class="btn btn-primary" onclick="sendMessage()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send
+            </button>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
