@@ -1,15 +1,23 @@
 import os
+from dotenv import load_dotenv
 from openai import OpenAI
 import httpx
 from neo4j import GraphDatabase
 from sentence_transformers import SentenceTransformer
 
+# Load environment variables from .env file
+load_dotenv()
+
 class GraphRAG:
     def __init__(self):
-        # Stack Overflow Sandbox Neo4j credentials
+        # Neo4j Aura Configuration
+        neo4j_uri = os.getenv("NEO4J_URI", "neo4j+s://8dba5c30.databases.neo4j.io")
+        neo4j_user = os.getenv("NEO4J_USERNAME", "neo4j")
+        neo4j_password = os.getenv("NEO4J_PASSWORD", "z51vC138OM37x46eiiPxL0Cm7zi6SovqDlxcEZnX-5M")
+        
         self.driver = GraphDatabase.driver(
-            "bolt://13.219.228.76:7687", 
-            auth=("neo4j", "fighter-transmission-states")
+            neo4j_uri, 
+            auth=(neo4j_user, neo4j_password)
         )
         self.embedder = SentenceTransformer('all-MiniLM-L6-v2')
         
@@ -23,7 +31,7 @@ class GraphRAG:
             api_key=api_key,
             http_client=httpx.Client(verify=False) 
         )
-        self.model_name = "openai/gpt-4o"
+        self.model_name = "deepseek/deepseek-r1"
 
     def run_gnn_scoring(self):
         # This is your "Training" phase using Neo4j GDS
@@ -43,9 +51,9 @@ class GraphRAG:
             
             with self.driver.session() as session:
                 cypher = """
-                MATCH (q:Question)
-                WHERE toLower(q.title) CONTAINS toLower($text_query)
-                RETURN q.title AS title, q.body_markdown AS body, q.link AS url
+                MATCH (c:Chunk)
+                WHERE toLower(c.text) CONTAINS toLower($text_query)
+                RETURN c.text AS text, c.fileName AS source
                 LIMIT 5
                 """
                 # Using the raw query text for keyword matching
@@ -54,8 +62,8 @@ class GraphRAG:
                 context_lines = []
                 for r in result:
                     # Clean up body text slightly
-                    body_snippet = r['body'].replace('\n', ' ')[:300]
-                    context_lines.append(f"[Question: {r['title']}]\nLink: {r['url']}\nSnippet: {body_snippet}...")
+                    text_snippet = r['text'].replace('\n', ' ')
+                    context_lines.append(f"[Source: {r['source']}]\nSnippet: {text_snippet}...")
                 
                 return "\n\n".join(context_lines)
 
@@ -83,7 +91,7 @@ class GraphRAG:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": query}
                 ],
-                max_tokens=1000
+                max_tokens=800 # Increased for Reasoning (CoT) + Final Answer
             )
             return response.choices[0].message.content
         except Exception as e:
