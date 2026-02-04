@@ -17,6 +17,9 @@ $neo4j = Test-Port 7687 "Neo4j (Graph DB)"
 
 if (-not ($apache -and $mysql)) {
     Write-Host "Please start Apache and MySQL in XAMPP Control Panel." -ForegroundColor Yellow
+} else {
+    Write-Host "Starting Java Backend Wrapper..." -ForegroundColor Green
+    & "$PSScriptRoot/run_java_backend.ps1"
 }
 
 if (-not $neo4j) {

@@ -1,3 +1,10 @@
 .env
 __pycache__/
 *.pyc
+
+# Java
+java/target/
+java/build_tools/
+*.jar
+*.class 
+*.log

@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-neo4j
-google-generativeai
-openai
-sentence-transformers
-pydantic
-
