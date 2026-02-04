@@ -22,7 +22,7 @@ class GraphRAG:
         self.embedder = SentenceTransformer('all-MiniLM-L6-v2')
         
         # Setup OpenRouter (OpenAI Compatible)
-        api_key = os.getenv("OPENROUTER_API_KEY", "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") 
+        api_key = os.getenv("OPENROUTER_API_KEY", "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") 
         
         # Using verify=False to bypass SSL errors common in some Windows/Corporate environments
         # Note: In production, properly configure your SSL certificates instead.
@@ -31,7 +31,7 @@ class GraphRAG:
             api_key=api_key,
             http_client=httpx.Client(verify=False) 
         )
-        self.model_name = "deepseek/deepseek-r1"
+        self.model_name = "meta-llama/llama-3.3-70b-instruct"
 
     def run_gnn_scoring(self):
         # This is your "Training" phase using Neo4j GDS
@@ -91,7 +91,7 @@ class GraphRAG:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": query}
                 ],
-                max_tokens=800 # Increased for Reasoning (CoT) + Final Answer
+                max_tokens=1000 # Increased for Reasoning (CoT) + Final Answer
             )
             return response.choices[0].message.content
         except Exception as e:
